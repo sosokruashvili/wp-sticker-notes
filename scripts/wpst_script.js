@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded',function(){
 	}
 });
 
+
+( function( $ ) {
+
 /* Main Class */
 function WPST() {
 	this.phpDATA = wpst_data;
@@ -33,7 +36,7 @@ function WPST() {
 		this.currentSticker = jQuery('<div/>', {
 				id: 'note-' + Math.random().toString(36).substr(2),
 				class: 'wpst-sticker-note',
-				css: {top: this.menuContainer.offset().top+"px" }
+				css: {top: this.menuContainer.offset().top + $("html").position().top + "px" }
 			}).appendTo('body');
 		this.allStickers.push( this.currentSticker );
 		return this.currentSticker;
@@ -128,10 +131,10 @@ function WPST() {
 		sticker.draggable({
 			handle: "header",
 			start: function(event, ui) {
-				ui.position.top -= $(document).scrollTop();
+				ui.position.top -= $(document).scrollTop() - $("html").position().top + parseInt( $("html").css("paddingTop") );
 			},
 			drag: function(event, ui) {
-				ui.position.top -= $(document).scrollTop();
+				ui.position.top -= $(document).scrollTop() - $("html").position().top + parseInt( $("html").css("paddingTop") );
 				sticker.removeClass("sticked");
 				sticker.attr( "data-from-center", WPST.calcFromCenter( sticker.position().left ) );
 			}
@@ -157,28 +160,27 @@ function WPST() {
 }
 var WPST = new WPST();
 
-jQuery(document).ready(function(e) {	
-	<!--$.noConflict( true );-->
-	var wpstMainContainer = WPST.createMenuContainer();
-	wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.list_button_html );
-	
-    $("i.icon-plus-squared").click(function(e) {
-    	var sticker = WPST.createNewSticker();
-		sticker.append( WPST.stickerHTML );
-		WPST.bindEvents( sticker );
-	});
-	
-	$("i.icon-block").click(function(e) {
-		$(".wpst-sticker-note").hide();
-	});
-	
-	$("i.icon-th-list").click(function(e) {
-		$(".wpst-sticker-note").show();
-	});
+	jQuery(document).ready(function(e) {
+		var wpstMainContainer = WPST.createMenuContainer();
+		wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.list_button_html );
+		
+		$("i.icon-plus-squared").click(function(e) {
+			var sticker = WPST.createNewSticker();
+			sticker.append( WPST.stickerHTML );
+			WPST.bindEvents( sticker );
+		});
+		
+		$("i.icon-block").click(function(e) {
+			$(".wpst-sticker-note").hide();
+		});
+		
+		$("i.icon-th-list").click(function(e) {
+			$(".wpst-sticker-note").show();
+		});
 
-	/* Create saved stickers from DB */
-	WPST.createSavedStickers( WPST.phpDATA.stickers );
-});
+		/* Create saved stickers from DB */
+		WPST.createSavedStickers( WPST.phpDATA.stickers );
+	});
 
 jQuery(window).resize(function(e) {
     WPST.screenWidth = getViewport("width");
@@ -219,3 +221,5 @@ function getViewport(what)
 	 	return(viewportwidth+"x"+viewportheight);
 	//-->
 }
+
+} )( jQuery );

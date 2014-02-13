@@ -20,7 +20,8 @@ $WPST_PLUGIN['name'] = "WP Sticker Notes";
 $WPST_PLUGIN['folder'] = basename(dirname(__FILE__));
 
 function __wp_sticker_menu() {
-	add_menu_page( 'WP Sticker Notes', 'WP Sticker Notes', 'edit_pages', 'spst_main', '__wp_sticker_get_page' );
+	global $WPST_PLUGIN;
+	add_menu_page( 'WP Sticker Notes', 'WP Sticker Notes', 'edit_pages', 'wpst_main', '__wp_sticker_get_page', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/images/Notes-icon.png" );
 }
 
 function __wp_sticker_get_page()

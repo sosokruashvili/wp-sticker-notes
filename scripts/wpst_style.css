@@ -72,10 +72,12 @@
 	position:absolute;
 	top:-23px;
 	left:0;
-	height:23px;
-	width:100%;
+	height:23px !important;
+	width:100% !important;
 	cursor:move;
 	float:left;
+	background:none;
+	border:none;
 }
 .wpst-sticker-note:before {
 	content:"";
@@ -109,6 +111,7 @@
 	font-family:"Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif;
 	line-height:1.2;
 	padding:10px 10px 0 15px;
+	overflow: auto !important;
 }
 .wpst-sticker-note.sticked .icon-ok {
 	display:none;
@@ -125,7 +128,7 @@
 }
 .wpst-sticker-note .icon-cancel {
 	position:absolute;
-	left:3;
+	left:1px;
 	top:5px;
 	z-index:9999;
 	cursor:pointer;
