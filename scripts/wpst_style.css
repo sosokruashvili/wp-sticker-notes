@@ -1,0 +1,148 @@
+/* Fixed menu container and buttons */
+.wpst-note-container {
+	width:43px !important;
+	height:130px !important;
+	position:fixed !important;
+	left:0 !important;
+	top:150px !important;
+	background:#CCC !important;
+	overflow:hidden;
+	padding:5px 0 0 0px !important;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	color:#229edc;
+	z-index:9999 !important;
+}
+.wpst-note-container ul {
+	list-style:none;
+	float:left;
+	display:block;
+	margin:0;
+	padding:0;
+}
+.wpst-note-container ul li {
+	list-style:none;
+	float:left;
+	max-width:100%;
+	display:block;
+	margin:0;
+	margin-top:10px;
+	padding:0;
+}
+.wpst-note-container .wpst-button {
+	cursor:pointer;
+	display:block;
+	margin-top:10px;
+}
+.wpst-note-container .icon-th-list:before {
+	margin-left:10px !important;
+	font-size:23px !important;
+}
+
+/* Stickers and sticker icons */
+.wpst-sticker-note {
+	position:absolute;
+	min-height:100px;
+	min-width:220px;
+	left:60px;
+	top:150px;
+	border:#F00;
+	background-color:#ffefb1;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 2px 1px 5px 0px rgba(50, 48, 50, 0.33);
+	-moz-box-shadow:    2px 1px 5px 0px rgba(50, 48, 50, 0.33);
+	box-shadow:         2px 1px 5px 0px rgba(50, 48, 50, 0.33);
+	z-index:9999;
+}
+.wpst-sticker-note .resize {
+	min-height:80px;
+	min-width:100%;
+	height:190px;
+	width:270px;
+	position:relative;
+}
+.wpst-sticker-note header {
+	display:block;
+	position:absolute;
+	top:-23px;
+	left:0;
+	height:23px;
+	width:100%;
+	cursor:move;
+	float:left;
+}
+.wpst-sticker-note:before {
+	content:"";
+	display:none;
+	position:absolute;
+	width:35px;
+	height:35px;
+	top:-15px;
+	left:calc(50% - 30px);
+	background-image:url(images/pushed-pin-hi_35.png);
+	background-repeat:no-repeat;
+	background-position:top center;
+}
+.wpst-sticker-note.sticked:before {
+	display:block;
+}
+.wpst-sticker-note textarea {
+	background:none;
+	border:none;
+	outline:none;
+	box-shadow:none;
+	width:95%;
+	height:calc(100% - 30px);
+	min-height:60px;
+	resize: none;
+	outline: none;
+	display:block;
+	margin:0 auto;
+	margin-top:23px;
+	font-size:18px;
+	font-family:"Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif;
+	line-height:1.2;
+	padding:10px 10px 0 15px;
+}
+.wpst-sticker-note.sticked .icon-ok {
+	display:none;
+}
+.wpst-sticker-note .ajax-loading {
+	position:absolute !important;
+	left: calc(50% - 20px) !important;
+	top: calc(50% - 30px) !important;
+	z-index:9999 !important;
+	display:none;
+}
+.wpst-sticker-note.loading .ajax-loading {
+	display:block;
+}
+.wpst-sticker-note .icon-cancel {
+	position:absolute;
+	left:3;
+	top:5px;
+	z-index:9999;
+	cursor:pointer;
+}
+.wpst-sticker-note .icon-cancel:before {
+	font-size:18px;
+	color:#666;	
+}
+.wpst-sticker-note .icon-ok {
+	position:absolute;
+	left:3px;
+	bottom:5px;
+	z-index:9999;
+	cursor:pointer;
+}
+.wpst-sticker-note .icon-ok:before {
+	font-size:18px !important;
+	color:#229edc;
+	color:#666;	
+}
