@@ -96,12 +96,13 @@ if(isIE){
 function WPST() {
 	this.phpDATA = wpst_data;
 	/* Define icon button's html */
-	this.add_button_html = "<i class='wpst-button icon-plus-squared'>";
-	this.cancel_button_html = "<i class='wpst-button icon-cancel-squared'>";
+	this.add_button_html = "<i class='wpst-button icon-plus-squared' title='Add new note'>";
+	this.cancel_button_html = "<i class='wpst-button icon-cancel-squared' title='Cancel'>";
 	this.edit_button_html = "<i class='wpst-button icon-plus-squared'>";
 	this.ok_button_html = "<i class='wpst-button icon-ok-squared'>";
 	this.list_button_html = "<i class='wpst-button icon-th-list'>";
-	this.block_button_html = "<i class='wpst-button icon-block'>";
+	this.block_button_html = "<i class='wpst-button icon-block' title='Hide Notes'>";
+	this.show_button_html = "<i class='wpst-button icon-dot-circled' title='Show Notes'>"
 	
 	this.stickerHTML = "<div class='resize'><header></header><textarea name='sticker_text'></textarea><div class='ajax-loading'><img src='"+wpst_data.plugin_dir+"/scripts/images/ajax-loader.gif'></div></div><i class='icon-cancel'></i><i class='icon-ok'></i>";
 	this.screenWidth = getViewport("width");
@@ -152,8 +153,7 @@ function WPST() {
 	}
 	
 	this.deleteSticker = function( sticker ) {
-		if( !sticker.hasClass("saved") )
-		{
+		if( !sticker.hasClass("saved") ) {
 			sticker.remove();
 			return true;
 		}
@@ -207,11 +207,9 @@ function WPST() {
 		sticker.find(".icon-ok").click(function(){
 			WPST.saveSticker($(this).closest(".wpst-sticker-note"));
 		});
-		
 		sticker.find(".icon-cancel").click(function(){
 			WPST.deleteSticker($(this).closest(".wpst-sticker-note"));
 		});
-		
 		sticker.draggable({
 			handle: "header",
 			start: function(event, ui) { 
@@ -223,7 +221,6 @@ function WPST() {
 				sticker.attr( "data-from-center", WPST.calcFromCenter( sticker.position().left ) );
 			}
 		});
-		
 		sticker.find(".resize").resizable({
 			start: function() { $(this).closest(".wpst-sticker-note").removeClass("sticked"); }
 		});
@@ -232,11 +229,9 @@ function WPST() {
 			$(this).closest(".wpst-sticker-note").removeClass("sticked");
 		});
 	}
-	
 	this.calcLeft = function( from_center ) {
 		return (this.screenWidth / 2) - from_center;
 	}
-	
 	this.calcFromCenter = function( from_left ) {
 		return (this.screenWidth / 2) - from_left;
 	}
@@ -246,7 +241,7 @@ var WPST = new WPST();
 
 	jQuery(document).ready(function(e) {
 		var wpstMainContainer = WPST.createMenuContainer();
-		wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.list_button_html );
+		wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.show_button_html );
 		
 		$("i.icon-plus-squared").click(function(e) {
 			var sticker = WPST.createNewSticker();
@@ -255,11 +250,19 @@ var WPST = new WPST();
 		});
 		
 		$("i.icon-block").click(function(e) {
+			$(this).hide();
+			$("i.icon-dot-circled").css('display','inline-block');
 			$(".wpst-sticker-note").hide();
 		});
 		
-		$("i.icon-th-list").click(function(e) {
+		$("i.icon-dot-circled").click(function(e) {
+			$(this).hide();
+			$("i.icon-block").css('display','inline-block');
 			$(".wpst-sticker-note").show();
+		});
+		
+		$("i.icon-th-list").click(function(e) {
+			/* Menu show */
 		});
 
 		/* Create saved stickers from DB */

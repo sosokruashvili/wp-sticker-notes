@@ -1,7 +1,7 @@
 /* Fixed menu container and buttons */
 .wpst-note-container {
 	width:43px !important;
-	height:130px !important;
+	height:96px !important;
 	position:fixed !important;
 	left:0 !important;
 	top:150px !important;
@@ -38,9 +38,12 @@
 	display:block;
 	margin-top:10px;
 }
+.wpst-note-container .wpst-button.icon-dot-circled {
+	display:none;
+}
 .wpst-note-container .icon-th-list:before {
 	margin-left:10px !important;
-	font-size:23px !important;
+	font-size:24px !important;
 }
 
 /* Stickers and sticker icons */
@@ -149,4 +152,6 @@
 	color:#229edc;
 	color:#666;	
 }
-
+.wpst-note-container .hide, wpst-sticker-note .hide {
+	display:none;
+}
