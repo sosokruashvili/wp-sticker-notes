@@ -53,7 +53,7 @@ function wpst_load_front_files()
 	wp_enqueue_style( 'jQueryUI', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/jqueryUI/css/ui-lightness/jquery-ui-1.10.4.custom.min.css", false, "1.0.0" );
 	wp_enqueue_script( 'jquery', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/jquery-1.11.0.min.js", false, "1.0.0" );
 	wp_enqueue_script( 'wpst-main-script', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/wpst_script.js", array("jquery"), "1.0.0", true );
-	wp_enqueue_script( 'jQueryUI', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/jqueryUI/js/jquery-ui-1.10.4.custom.js", array("jquery"), "1.0.0", true );
+	wp_enqueue_script( 'jQueryUI', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/jqueryUI/js/jquery-ui-1.10.4.custom.min.js", array("jquery"), "1.0.0", true );
 	
 	// Send data to client
 	wpst_send_client_data();
