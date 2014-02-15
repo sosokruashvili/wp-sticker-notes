@@ -12,12 +12,19 @@ Max WP Version: 3.5.+
 */
 
 register_activation_hook(__FILE__, '__wp_sticker_plugin_install');
+
 add_action( 'admin_menu', '__wp_sticker_menu' );
 add_action( 'wp_enqueue_scripts', 'wpst_load_front_files' );
 
 // Plugin information vars
 $WPST_PLUGIN['name'] = "WP Sticker Notes";
 $WPST_PLUGIN['folder'] = basename(dirname(__FILE__));
+
+// Register and update plugin options to wordpress options mechanism 
+if( $_POST['group'] ) {
+	add_option( "wpst_allow_user_groups", $_POST['group'] );
+	update_option( "wpst_allow_user_groups", $_POST['group'] );
+}
 
 function __wp_sticker_menu() {
 	global $WPST_PLUGIN;
@@ -29,13 +36,18 @@ function __wp_sticker_get_page()
 	global $WPSticker;
 	global $WPST_PLUGIN;
 	
-	wp_enqueue_style( 'wpst-main-style', plugins_url()."/".$WPST_PLUGIN['folder']."/style.css" );
+	wp_enqueue_style( 'wpst-main-style', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/admin-style.css" );
 	require_once(__DIR__."/pages/admin_main.php");
 }
 
 function wpst_load_front_files()
 {
+	// Check user permissions
+	if(!wpst_check_permissions()) return;
+	
 	global $WPST_PLUGIN;
+	$WPST_CURRENT_USER = get_userdata( get_current_user_id() );
+	
 	wp_enqueue_style( 'wpst-main-style', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/wpst_style.css", false, "1.0.0" );
 	wp_enqueue_style( 'wpst-fontello', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/fontello/css/fontello.css", false, "1.0.0" );
 	wp_enqueue_style( 'jQueryUI', plugins_url()."/".$WPST_PLUGIN['folder']."/scripts/jqueryUI/css/ui-lightness/jquery-ui-1.10.4.custom.min.css", false, "1.0.0" );
@@ -50,6 +62,7 @@ function wpst_load_front_files()
 function wpst_send_client_data()
 {
 	global $WPST_PLUGIN;
+	// Send CDATA for JS
 	wp_localize_script('wpst-main-script', 'wpst_data', array(
 	  'userid' => get_current_user_id(),
 	  'home_url' => home_url(),
@@ -65,6 +78,28 @@ function get_stickers_json()
 	$results = $wpdb->get_results("SELECT * FROM wp_sticker_notes WHERE url = '{$current_url}'");
 	return json_encode( $results );
 }
+
+function wpst_check_permissions()
+{
+	// Get Current User Data Object
+	$curent_user_data = get_userdata( get_current_user_id() );
+	$current_user_groups = $curent_user_data->roles;
+	// Get allows groups to use this plugin front
+	$allowed_groups = get_option("wpst_allow_user_groups");
+	// Return true if user is administrator
+	if( @in_array("administrator", $current_user_groups) ) {
+		return true;
+	}
+	
+	if(!$current_user_groups) return false;
+	
+	foreach(@$current_user_groups as $group) { 
+		if(in_array($group, $allowed_groups))
+			return true;
+	}
+	return false;
+}
+
 
 add_action( 'wp_ajax_nopriv_wpst_save_sticker', 'wpst_save_sticker' );
 add_action( 'wp_ajax_wpst_save_sticker', 'wpst_save_sticker' );
@@ -113,12 +148,5 @@ function __wp_sticker_plugin_install()
 	  cr_date varchar(200) NOT NULL,
 	  UNIQUE KEY id (id)
 	);";
-	$settings_table = "CREATE TABLE wp_sticker_notes_settings (
-	id INT NOT NULL AUTO_INCREMENT,
-	  parameter varchar(200) NOT NULL,
-	  value varchar(200) NOT NULL,
-	  UNIQUE KEY id (id)
-	);";
 	dbDelta($main_table);
-	dbDelta($settings_table);
 }
