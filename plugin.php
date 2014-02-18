@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: WP Sticker Notes
-Plugin URI: http://webintelligence.de/
+Plugin URI: http://sticker-notes.com/
 Description: Add sticker note for any page to any position 
-Version: 1.0
-Author: W3I
-Author URI: http://webintelligence.de/
+Version: 1.0.0
+Author: Kruashvili
+Author URI: http://sticker-notes.com/
 License: GPL2
 */
 
