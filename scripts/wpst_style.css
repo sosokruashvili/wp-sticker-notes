@@ -181,6 +181,10 @@
 	padding:10px 10px 0 15px;
 	overflow: auto !important;
 }
+.wpst-sticker-note textarea:focus {
+	border:none !important;
+	outline:none !important;
+}
 .wpst-sticker-note.sticked .icon-ok {
 	display:none;
 }

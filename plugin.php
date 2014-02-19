@@ -135,7 +135,7 @@ function wpst_delete_sticker() {
 		$res2 = $wpdb->query( "DELETE FROM " . $wpdb->prefix ."sticker_notes WHERE  sticker_id = '{$sticker_id}'" );
 	if( $res2 )
 		echo "OK";
-	exit();
+	exit(); 
 }
 
 function __wp_sticker_plugin_install() {
@@ -149,7 +149,7 @@ function __wp_sticker_plugin_install() {
 	  color varchar(100) NOT NULL,
 	  cr_date varchar(200) NOT NULL,
 	  UNIQUE KEY id (id)
-	);";
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 	dbDelta( $main_table );
 }
 ?>

@@ -107,6 +107,7 @@ function WPST() {
 	this.stickerHTML = "<div class='resize'><header></header><textarea name='sticker_text'></textarea><div class='ajax-loading'><img src='"+wpst_data.plugin_dir+"/scripts/images/ajax-loader.gif'></div></div><i class='icon-cancel'></i><i class='icon-ok'></i>";
 	this.screenWidth = getViewport("width");
 	this.allStickers = new Array();
+	this.topFixPosition = 0;
 	
 	/* Functions */
 	this.createMenuContainer = function() {
@@ -121,13 +122,19 @@ function WPST() {
 		this.currentSticker = jQuery('<div/>', {
 				id: 'note-' + Math.random().toString(36).substr(2),
 				class: 'wpst-sticker-note',
-				css: {top: this.menuContainer.offset().top + $("html").position().top + "px" }
+				css: {top: this.menuContainer.offset().top + WPST.topFixPosition + "px" }
 			}).appendTo('body');
 		this.allStickers.push( this.currentSticker );
 		return this.currentSticker;
 	}
 	
-	
+	this.calculateTopFix = function() {
+		var h_position = jQuery("html").css("position");
+		var b_position = jQuery("body").css("position");
+		if( b_position == "relative" || b_position == "absolute" || h_position == "relative" || h_position == "absolite" ) {
+			this.topFixPosition = $("html").position().top;
+		}
+	}
 	
 	this.saveSticker = function( sticker ) {
 		properties = JSON.stringify( this.getProperties( sticker ) );
@@ -212,12 +219,11 @@ function WPST() {
 		});
 		sticker.draggable({
 			handle: "header",
-			cursorAt: {top: 30},
 			start: function(event, ui) { 
-				if(isWebKit) ui.position.top -= $(document).scrollTop();
+				if(isWebKit) ui.position.top -= jQuery(document).scrollTop() - WPST.topFixPosition;
 			},
 			drag: function(event, ui) {
-				if(isWebKit) ui.position.top -= $(document).scrollTop();
+				if(isWebKit) ui.position.top -= jQuery(document).scrollTop() - WPST.topFixPosition;
 				sticker.removeClass("sticked");
 				sticker.attr( "data-from-center", WPST.calcFromCenter( sticker.position().left ) );
 			}
@@ -229,6 +235,7 @@ function WPST() {
 		sticker.find("textarea").keyup(function(){
 			$(this).closest(".wpst-sticker-note").removeClass("sticked");
 		});
+		
 	}
 	this.calcLeft = function( from_center ) {
 		return (this.screenWidth / 2) - from_center;
@@ -240,6 +247,7 @@ function WPST() {
 var WPST = new WPST();
 
 	jQuery(document).ready(function(e) {
+		WPST.calculateTopFix();
 		var wpstMainContainer = WPST.createMenuContainer();
 		wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.show_button_html );
 		
