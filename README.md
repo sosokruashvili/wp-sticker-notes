@@ -1,4 +1,4 @@
-Wordpress Sticker Notes
+Wordpress Sticky Notes
 ================
 
 Wordpress plugin for sticky notes on website
