@@ -212,11 +212,12 @@ function WPST() {
 		});
 		sticker.draggable({
 			handle: "header",
+			cursorAt: {top: 30},
 			start: function(event, ui) { 
-				if(isWebKit) ui.position.top -= $(document).scrollTop() - $("html").position().top + parseInt( $("html").css("paddingTop") );
+				if(isWebKit) ui.position.top -= $(document).scrollTop();
 			},
 			drag: function(event, ui) {
-				if(isWebKit) ui.position.top -= $(document).scrollTop() - $("html").position().top + parseInt( $("html").css("paddingTop") );
+				if(isWebKit) ui.position.top -= $(document).scrollTop();
 				sticker.removeClass("sticked");
 				sticker.attr( "data-from-center", WPST.calcFromCenter( sticker.position().left ) );
 			}
@@ -235,7 +236,6 @@ function WPST() {
 	this.calcFromCenter = function( from_left ) {
 		return (this.screenWidth / 2) - from_left;
 	}
-
 }
 var WPST = new WPST();
 
@@ -261,10 +261,6 @@ var WPST = new WPST();
 			$(".wpst-sticker-note").show();
 		});
 		
-		$("i.icon-th-list").click(function(e) {
-			/* Menu show */
-		});
-
 		/* Create saved stickers from DB */
 		WPST.createSavedStickers( WPST.phpDATA.stickers );
 	});
