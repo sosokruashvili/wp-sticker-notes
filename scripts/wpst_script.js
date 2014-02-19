@@ -235,7 +235,6 @@ function WPST() {
 	this.calcFromCenter = function( from_left ) {
 		return (this.screenWidth / 2) - from_left;
 	}
-
 }
 var WPST = new WPST();
 
@@ -261,10 +260,6 @@ var WPST = new WPST();
 			$(".wpst-sticker-note").show();
 		});
 		
-		$("i.icon-th-list").click(function(e) {
-			/* Menu show */
-		});
-
 		/* Create saved stickers from DB */
 		WPST.createSavedStickers( WPST.phpDATA.stickers );
 	});

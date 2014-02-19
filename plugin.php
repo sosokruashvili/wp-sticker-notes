@@ -57,16 +57,13 @@ function __wp_sticker_get_page() {
 function wpst_load_front_files() {
 	// Check user permissions
 	if( ! wpst_check_permissions() ) return;
-	
 	global $WPST_PLUGIN;
-	$WPST_CURRENT_USER = get_userdata( get_current_user_id() );
 	
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.0.0" );
-	wp_enqueue_style( 'wpst-fontello', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/fontello/css/fontello.css", false, "1.0.0" );
-	wp_enqueue_style( 'jQueryUI', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/jqueryUI/css/ui-lightness/jquery-ui-1.10.4.custom.min.css", false, "1.0.0" );
-	wp_enqueue_script( 'jquery', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/jquery-1.11.0.min.js", false, "1.0.0" );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.0.0", true );
-	wp_enqueue_script( 'jQueryUI', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/jqueryUI/js/jquery-ui-1.10.4.custom.min.js", array("jquery"), "1.0.0", true );
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.0.3" );	
+	wp_enqueue_script( 'jquery' );
+	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
+	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
+	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.0.3", true );
 	
 	// Send data to client
 	wpst_send_client_data();
@@ -76,11 +73,11 @@ function wpst_send_client_data() {
 	global $WPST_PLUGIN;
 	// Send CDATA for JS
 	wp_localize_script( 'wpst-main-script', 'wpst_data', array(
-															  'userid' => get_current_user_id(),
-															  'home_url' => home_url(),
-															  'plugin_dir' => plugins_url() . "/" . $WPST_PLUGIN['folder'],
-															  'stickers' => get_stickers_json()
-															));
+						'userid' => get_current_user_id(),
+						'home_url' => home_url(),
+						'plugin_dir' => plugins_url() . "/" . $WPST_PLUGIN['folder'],
+						'stickers' => get_stickers_json()
+					  ));
 }
 
 function get_stickers_json() {

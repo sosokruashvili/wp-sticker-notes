@@ -9,12 +9,13 @@ $USER_P = get_option(  $wpdb->prefix.'user_roles', $default );
 $groups = get_option( "wpst_allow_user_groups" );
 ?>
 <form name="user-group-choose" action="" method="post">
-	<label><?php echo __( "Select user group which can create and see stickers" )?></label><div class="clear"></div>
+	<label><?php echo __( "Select user group which can create and see stickers" )?></label><div class="clear h10"></div>
 	<select name="group[]" multiple style="width:200px; height:250px;">
     	<?php foreach( $USER_P as $slug => $user_group ):  if( $slug == 'administrator' ) continue;  ?>
     		<option <?php echo ( in_array( $slug, $groups ) ) ? "selected" : "";?> value="<?php echo $slug?>"><?php echo $user_group["name"]?></option>
         <?php endforeach?>
     </select>
-    <div class="clear h20"></div>
+    <div class="clear h10"></div>
     <button class="button action"><?php echo __( "Save" )?></button>
 </form>
+<div class="clear h30"></div>
