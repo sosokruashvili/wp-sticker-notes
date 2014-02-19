@@ -101,7 +101,7 @@ function wpst_check_permissions() {
 	if( ! $current_user_groups ) return false;
 	
 	foreach( @$current_user_groups as $group ) { 
-		if( in_array( $group, $allowed_groups ) )
+		if( @in_array( $group, $allowed_groups ) )
 			return true;
 	}
 	return false;
