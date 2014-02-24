@@ -9,7 +9,6 @@ where the problem is or fix needed.
 
 This tool is very usefull on website testing stage.
 
-Visit official website: http://sticker-notes.com
 
 <h2>View Demo</h2>
 https://www.youtube.com/watch?v=Ys5pH3hnlaQ
