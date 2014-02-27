@@ -1,16 +1,16 @@
 <?php
 /*
-Plugin Name: WP Sticker Notes
+Plugin Name: WP Sticky Notes
 Plugin URI: http://sticker-notes.com/
-Description: Add sticker note for any page to any position 
-Version: 1.0.0
+Description: Add sticky note for any page to any position 
+Version: 1.0.8
 Author: Kruashvili
 Author URI: http://sticker-notes.com/
-License: GPL2
+License: GPL 2
 */
 
 /*  
-Copyright 2014  SosoKruashvili  (email : yruashvili@gmail.com)
+Copyright 2014  Kruashvili  (email : soso@kruashvili.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as 
@@ -32,7 +32,7 @@ add_action( 'admin_menu', '__wp_sticker_menu' );
 add_action( 'wp_enqueue_scripts', 'wpst_load_front_files' );
 
 // Plugin information vars
-$WPST_PLUGIN['name'] = "WP Sticker Notes";
+$WPST_PLUGIN['name'] = "WP Sticky Notes";
 $WPST_PLUGIN['folder'] = basename( dirname( __FILE__ ) );
 
 // Register and update plugin options to wordpress options mechanism 
@@ -43,14 +43,14 @@ if( $_POST['group'] ) {
 
 function __wp_sticker_menu() {
 	global $WPST_PLUGIN;
-	add_menu_page( 'WP Sticker Notes', 'WP Sticker Notes', 'edit_pages', 'wpst_main', '__wp_sticker_get_page', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/images/Notes-icon.png" );
+	add_menu_page( 'WP Sticky Notes', 'WP Sticky Notes', 'edit_pages', 'wpst_main', '__wp_sticker_get_page', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/images/Notes-icon.png" );
 }
 
 function __wp_sticker_get_page() {
 	global $WPSticker;
 	global $WPST_PLUGIN;
 	
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/admin-style.css" );
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/admin-style.css", false, "1.0.8" );
 	require_once( __DIR__ . "/pages/admin_main.php" );
 }
 
@@ -59,11 +59,11 @@ function wpst_load_front_files() {
 	if( ! wpst_check_permissions() ) return;
 	global $WPST_PLUGIN;
 	
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.0.3" );	
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.0.8" );	
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
 	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.0.3", true );
+	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.0.8", true );
 	
 	// Send data to client
 	wpst_send_client_data();
@@ -88,11 +88,18 @@ function get_stickers_json() {
 }
 
 function wpst_check_permissions() {
+	
 	// Get Current User Data Object
 	$curent_user_data = get_userdata( get_current_user_id() );
 	$current_user_groups = $curent_user_data->roles;
+	
 	// Get allows groups to use this plugin front
 	$allowed_groups = get_option( "wpst_allow_user_groups" );
+	
+	// Return true if everyone is selected in permissions
+	if( @in_array( "everyone", $allowed_groups ) )
+		return true;
+	
 	// Return true if user is administrator
 	if( @in_array( "administrator", $current_user_groups ) ) {
 		return true;

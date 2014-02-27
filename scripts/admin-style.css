@@ -17,3 +17,7 @@
 .h50 {
 	height:50px;
 }
+form[name=user-group-choose] select {
+	width:300px;
+	height:200px !important;
+}
