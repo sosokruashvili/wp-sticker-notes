@@ -11,4 +11,4 @@ This tool is very usefull on website testing stage.
 
 
 <h2>View Demo</h2>
-<iframe width="853" height="480" src="//www.youtube.com/embed/PSo_MQukxdM" frameborder="0" allowfullscreen></iframe>
+https://www.youtube.com/watch?v=PSo_MQukxdM
