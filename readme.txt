@@ -4,7 +4,7 @@ Donate link: http://sticker-notes.com/
 Tags: sticker, sticky, notes, plugin, wordpress
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.0.8
+Stable tag: 1.5.2
 License: GNU3
 License URI: https://www.gnu.org/copyleft/gpl.html
 
@@ -17,7 +17,10 @@ Create sticky notes to any page on any position.
 *   Communicate between website administrator and developer by simple notes ( tasks )
 *   See exact location of problem or some issue
 *   Control issues and communicate by inline note editing
+*   Set permissions to roles or users with custom capabilities: read, create, edit
 
+This plugin is useful while website testing and tracking bugs. User (with appropriate permissions) can create and stick note anywhere on any page.
+For example: if there is bug or is required to change something administrator can create note and stick on exact location where the issue is and developer (with appropriate permissions) can see the note.
 This plugin uses as less scripts and css as possible to avoid traffic load or performance problem, and is as simple as possible.
 Some other features will be added in next releases :D
 
@@ -52,6 +55,20 @@ This happens when website is with responsive design and  you are viewing notes i
 
 == Changelog ==
 
+= 1.5.2 = 
+* Fixed bugs related to default capabilities
+
+= 1.5.1 = 
+* Fixed some minor bugs related to new features
+
+= 1.5.0 = 
+* Changed permission management structure, added capabilities: read, create, edit
+* Added capability management on user edit page
+* ctrl + s - save note command
+* Minor design changes: light shadow for note and white background
+* Fixed bug when deleting already deleted note bug
+* Fixed bug while saving unchanged note
+
 = 1.0.8 = 
 * Added "Everyone" option in permission management
 * Fixed some minor bugs
@@ -64,6 +81,15 @@ This happens when website is with responsive design and  you are viewing notes i
 * Realease
 
 == Upgrade Notice ==
+
+= 1.5.2 = 
+Fixed bugs related to default capabilities
+
+= 1.5.1 = 
+Fixed minor bugs
+
+= 1.5.0 = 
+New features: extended permission management. You can set capabilities to user roles and users. Caps: read, create, edit. Also changed some minor UI. 
 
 = 1.0.8 = 
 New option to permission management. Added "Everyone" option, for using this plugin more flexible

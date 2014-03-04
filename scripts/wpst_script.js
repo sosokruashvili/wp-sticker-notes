@@ -121,7 +121,7 @@ function WPST() {
 	
 	/* Functions */
 	this.createMenuContainer = function() {
-		 this.menuContainer = jQuery('<div/>', {
+		this.menuContainer = jQuery('<div/>', {
 				id: 'wpst-note-container-main',
 				class: 'wpst-note-container'
 			}).appendTo('body');
@@ -152,10 +152,13 @@ function WPST() {
 			data: { sticker_id: sticker_id, properties: properties, url: url, note: note, action: "wpst_save_sticker" },
 			dataType: "text",
 			success: function (dataBack) {
-				if(dataBack == "OK")
+				if(dataBack == "OK") {
 					sticker.removeClass("loading").addClass("sticked saved");
-				else
-					alert("Something wrong with ajax :(");
+				}
+				else {
+					alert( dataBack );
+					sticker.removeClass("loading");
+				}
 			},
 			async:true
 		});
@@ -176,6 +179,10 @@ function WPST() {
 			success: function (dataBack) {
 				if(dataBack == "OK")
 					sticker.remove();
+				else {
+					alert( dataBack );
+					sticker.removeClass("loading");
+				}
 			},
 			async:true
 		});
@@ -226,28 +233,12 @@ function WPST() {
 			return - jQuery("html").position().top;
 		else 
 			return jQuery(document).scrollTop();
-		
-		/*if( isWebKit ) {
-			if( isOpera ) {
-				if( this.isParentRelative )
-					return jQuery(document).scrollTop() - jQuery("html").position().top;
-				else
-					return jQuery(document).scrollTop();
-			}
-			if( this.isParentRelative )
-				return jQuery(document).scrollTop() - jQuery("html").position().top;
-			else
-				return 0;
-		}
-		else {
-			if( this.isParentRelative )
-				return jQuery("html").position().top;
-			else
-				return jQuery(document).scrollTop();
-		}*/
 	}
 	
 	this.bindEvents = function( sticker ) {
+		sticker.click(function(){
+			recentClass( sticker );
+		});
 		sticker.find(".icon-ok").click(function(){
 			WPST.saveSticker($(this).closest(".wpst-sticker-note"));
 		});
@@ -286,8 +277,20 @@ function WPST() {
 var WPST = new WPST();
 
 	jQuery(document).ready(function(e) {
-		var wpstMainContainer = WPST.createMenuContainer();
-		wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.show_button_html );
+		
+		$(document).bind('keydown', function(e) {
+		  if(e.ctrlKey && (e.which == 83)) {
+			e.preventDefault();
+			jQuery( ".wpst-sticker-note.recent" ).find( ".icon-ok" ).click();
+			return false;
+		  }
+		});
+		
+		/* Create menu container if user has rights to create notes */
+		if( wpst_data.wpst_current_caps.wpst_create ) { 
+			var wpstMainContainer = WPST.createMenuContainer();
+			wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.show_button_html );
+		}
 		
 		$("i.icon-plus-squared").click(function(e) {
 			var sticker = WPST.createNewSticker();
@@ -309,6 +312,7 @@ var WPST = new WPST();
 		
 		/* Create saved stickers from DB */
 		WPST.createSavedStickers( WPST.phpDATA.stickers );
+		
 	});
 
 jQuery(window).resize(function(e) {
@@ -316,9 +320,12 @@ jQuery(window).resize(function(e) {
 	for (var i in WPST.allStickers) {
 		WPST.allStickers[i].css({left: WPST.calcLeft( WPST.allStickers[i].attr("data-from-center") )+"px" });
 	}
-	//console.log(WPST.allStickers);
 });
 
+function recentClass( sticker ) {
+	jQuery( ".wpst-sticker-note.recent" ).removeClass( "recent" );
+	sticker.addClass( "recent" );
+}
 
 /* Function to get actuall viewpor width and height. Cross different browsers */
 function getViewport(what)

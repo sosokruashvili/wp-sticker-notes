@@ -70,8 +70,9 @@
 	position:fixed !important;
 	left:0 !important;
 	top:150px !important;
-	background:#CCC !important;
-	overflow:hidden;
+	background: none repeat scroll 0 0 #FFFFFF !important;
+	box-shadow: 0 0 6px #CCCCCC;
+	overflow:hidden; 
 	padding:5px 0 0 0px !important;
 	-webkit-border-top-right-radius: 5px;
 	-webkit-border-bottom-right-radius: 5px;

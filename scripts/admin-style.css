@@ -1,4 +1,7 @@
 /* Admin page Styles */
+h1.wpst-admin-head {
+	margin-top:50px;
+}
 .clear {
 	clear:both;
 }
@@ -17,7 +20,18 @@
 .h50 {
 	height:50px;
 }
-form[name=user-group-choose] select {
+form[name=group-permissions] select.wpst-caps-list {
+	width:300px;
+	height:200px !important;
+}
+.hide {
+	display:none;
+}
+#wpst_perm_users {
+	width:300px;
+	height:200px !important;
+}
+#wpst-user-profile-caps-select {
 	width:300px;
 	height:200px !important;
 }
