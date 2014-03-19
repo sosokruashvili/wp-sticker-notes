@@ -10,5 +10,11 @@ where the problem is or fix needed.
 This tool is very usefull on website testing stage.
 
 
+**Version 2.0**
+* Added URL Parser in note content, replace plain urls to link
+* Possibility to tag users in note with “@” and target note to specified users
+* Email notification for users who was tagged on a note
+* Fixed bug: css verriding fontello elements
+
 <h2>View Demo</h2>
 https://www.youtube.com/watch?v=PSo_MQukxdM
