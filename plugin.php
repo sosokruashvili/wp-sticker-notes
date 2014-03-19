@@ -3,7 +3,7 @@
 Plugin Name: WP Sticky Notes
 Plugin URI: http://sticker-notes.com/
 Description: Add sticky note for any page to any position 
-Version: 1.5.2
+Version: 2.0.1
 Author: Kruashvili
 Author URI: http://sticker-notes.com/
 License: GPL 2
@@ -26,8 +26,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+global $wpst_db_version;
+$wpst_db_version = "1.5";
+
 register_activation_hook( __FILE__, '__wp_sticker_plugin_install' );
 
+add_action( 'plugins_loaded', 'wpst_update_db_check' );
 add_action( 'admin_menu', '__wp_sticker_menu' );
 add_action( 'wp_enqueue_scripts', 'wpst_load_front_files' );
 
@@ -39,7 +43,6 @@ $WPST_PLUGIN['folder'] = basename( dirname( __FILE__ ) );
 if( !$_COOKIE["wpst_id"] ) {
 	setcookie( "wpst_id", uniqid(), time()+60*60*24*300, "/" );
 }
-
 /* Add custom caps to administrator by default */
 $role = get_role( "administrator" ); 
 $role->add_cap( "wpst_read" );
@@ -71,7 +74,7 @@ function __wp_sticker_menu() {
 function __wp_sticker_get_page() {
 	global $WPSticker;
 	global $WPST_PLUGIN;
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/admin-style.css", false, "1.0.8" );
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/admin-style.css", false, "1.2.8" );
 	require_once( __DIR__ . "/pages/admin_main.php" );
 }
 
@@ -83,11 +86,12 @@ function wpst_is_unauth_and_can( $cap ) {
 
 function wpst_load_front_files() {
 	global $WPST_PLUGIN;
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.0.8" );	
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.2" );	
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
 	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.0.8", true );
+	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.2", true );
+	wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
 	
 	// Send data to client
 	wpst_send_client_data();
@@ -136,30 +140,37 @@ function wpst_user_can( $subject ) {
 function get_stickers_json() {
 	global $wpdb;
 	$current_url = "http" . (( $_SERVER['SERVER_PORT'] == 443 ) ? "s://" : "://") . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-	
+	$current_user_id = ( get_current_user_id() ) ? get_current_user_id() : "NAN";
 	if( wpst_user_can( "wpst_read" ) ) {
-		$results = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' ");
+		$results[] = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' AND target_users = '' ");
 	}
-	else if( is_user_logged_in() ) {
-		$results = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' AND author = " . get_current_user_id() );
+	$results[] = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' AND author = " . $current_user_id );
+	$results[] = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' AND cookie_user_id = '" . $_COOKIE["wpst_id"] . "'" );
+	$results[] = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' AND target_users LIKE '%" . $current_user_id . "|%' ");
+	foreach( $results as $res ) {
+		if( !empty( $res ) ) {
+			foreach( $res as $sticker_objects ) {
+				$result[$sticker_objects->sticker_id] = $sticker_objects;
+			}
+		}
 	}
-	else {
-		$results = $wpdb->get_results( "SELECT * FROM " . $wpdb->prefix . "sticker_notes WHERE url = '{$current_url}' AND cookie_user_id = '" . $_COOKIE["wpst_id"] . "'" );
-	}
-	
-	return json_encode( $results );
+	return json_encode( $result );
 }
 
 add_action( 'wp_ajax_nopriv_wpst_save_sticker', 'wpst_save_sticker' );
 add_action( 'wp_ajax_wpst_save_sticker', 'wpst_save_sticker' );
 function wpst_save_sticker() {
 	global $wpdb;
-	
 	$sticker_id = $_POST["sticker_id"];
-	$sticker_props = stripslashes($_POST['properties']);
+	$sticker_props = stripslashes( $_POST['properties'] );
 	$sticker_url = $_POST['url'];
-	$sticker_note = $_POST['note'];
-	
+	$sticker_note = stripslashes( $_POST['note'] );
+	$t_users = json_decode( $_POST['users'] );
+
+	foreach( $t_users as $t_user ) {
+		$target_users .= $t_user . "|";
+	}
+
 	if( $sticker_id ) {
 		if( !$wpdb->get_results( "SELECT sticker_id FROM  " . $wpdb->prefix ."sticker_notes WHERE sticker_id = '{$sticker_id}'" ) ) {
 			if( !wpst_user_can( "wpst_create" ) ) {
@@ -171,32 +182,36 @@ function wpst_save_sticker() {
 																		 "note" => $sticker_note,
 																		 "cr_date" => date("Y-m-d"),
 																		 "author" => get_current_user_id(),
+																		 "target_users" => $target_users,
 																		 "cookie_user_id" => $_COOKIE["wpst_id"]
 																		 ) );
 			if( !$res )
 				exit( __("Something wrong with query") );
+			else
+				wpst_send_notification( $t_users ); // Send notification mail to target users
 		}
 		else {
+			$where["sticker_id"] = $sticker_id;
 			if( !wpst_user_can( "wpst_edit" ) ) {
-				$where["sticker_id"] = $sticker_id;
 				$where["author"] = get_current_user_id();
-				if( !is_user_logged_in() )
+				if( !is_user_logged_in() ) {
 					$where["cookie_user_id"] = $_COOKIE["wpst_id"];
-				$res1 = $wpdb->update( $wpdb->prefix ."sticker_notes", array( "sticker_id" => $sticker_id, 
-																			  "url" => $sticker_url, 
-																			  "properties" => $sticker_props, 
-																			  "note" => $sticker_note ), 
+				}
+			}
+			$check = $wpdb->get_results( "SELECT target_users FROM  " . $wpdb->prefix ."sticker_notes WHERE sticker_id = '{$sticker_id}'", "ARRAY_A" );
+			$old_target_users = array_filter( explode( "|", $check[0]['target_users'] ) );
+			$notification_users = array_diff( $t_users, $old_target_users );
+			$res1 = $wpdb->update( $wpdb->prefix ."sticker_notes", array( "sticker_id" => $sticker_id, 
+																		"url" => $sticker_url, 
+																		"properties" => $sticker_props, 
+																		"target_users" => $target_users,
+																		"note" => $sticker_note ), 
 																	  $where );
-				if( !$res1 )
-					exit( __("You cannot edit this sticky note or is already deleted") );
-			}
-			else {
-				$res1 = $wpdb->update( $wpdb->prefix ."sticker_notes", array( "sticker_id" => $sticker_id, 
-																			  "url" => $sticker_url, 
-																			  "properties" => $sticker_props, 
-																			  "note" => $sticker_note ), 
-																	   array( "sticker_id" => $sticker_id ) );
-			}
+			if( !$res1 )
+				exit( __("You cannot edit this sticky note or is already deleted") );
+			else
+				wpst_send_notification( $notification_users ); // Send notification mail to only new target users
+			
 		}
 	}
 	unset( $where );
@@ -227,6 +242,54 @@ function wpst_delete_sticker() {
 	}
 	unset( $where );
 	exit( "OK" );
+}
+/* 
+Ajax get users list by search keyword
+*/
+add_action( 'wp_ajax_nopriv_wpst_get_users', 'wpst_get_users' );
+add_action( 'wp_ajax_wpst_get_users', 'wpst_get_users' );
+function wpst_get_users() {
+	$search = strip_tags( $_POST['letters'] );
+	$args = array (
+		'search'  => '*' . $search .'*',
+		'fields'  => array( 'ID', 'display_name' ),
+		'search_columns' => array(
+			'user_login',
+			'user_nicename',
+			'user_email',
+			'user_url',
+		),
+		'number'  => 10
+	);
+	$user_query = new WP_User_Query( $args );
+	
+	echo json_encode( $user_query->results );
+	exit();
+}
+
+function wpst_send_notification( $notification_users ) {
+	foreach( $notification_users as $userid ) {
+		$tempObj = get_userdata( $userid );
+		$notification_emails[] = $tempObj->user_email;
+	}
+	$note_url = $_POST['url'];
+	$website_url = get_site_url( $blog_id, $path, "http" ); 
+	$current_user_info = get_userdata( get_current_user_id() );
+	$current_user_display_name = $current_user_info->data->display_name;
+	$headers = 'From: ' . $_SERVER['HTTP_HOST'] . ' <' . get_option( "admin_email") . '>';
+	
+	add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+	wp_mail( $notification_emails, "New sticky note", "User: {$current_user_display_name} has tagged you on a note with text: <br><blockquote style='color:#7f7f7f'>" .  strip_tags( stripslashes( $_POST['note'] ) ) . "</blockquote><a href='{$note_url}'> See the note</a>", $headers );
+	// Reset content-type to avoid conflicts
+	remove_filter( 'wp_mail_content_type', 'set_html_content_type' );	
+}
+function set_html_content_type() {
+	return 'text/html';
+}
+function wpst_pr( $ar ) {
+	echo "<pre>";
+	print_r( $ar );
+	echo "</pre>";
 }
 
 /* 
@@ -267,13 +330,16 @@ function wpst_extra_user_profile_fields( $user ) {  ?>
 <?php 
 } 
 
+function wpst_update_db_check() {
+    global $wpst_db_version;
+    if ( get_site_option( 'wpst_db_version' ) != $wpst_db_version ) {
+        __wp_sticker_plugin_install();
+    }
+}
+
 function __wp_sticker_plugin_install() {
-	$role = get_role( "administrator" ); 
-	$role->add_cap( "wpst_read" );
-	$role->add_cap( "wpst_edit" );
-	$role->add_cap( "wpst_create" );
-	
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	global $wpdb;
+	global $wpst_db_version;
 	$main_table = "CREATE TABLE " . $wpdb->prefix . "sticker_notes (
 	id INT NOT NULL AUTO_INCREMENT,
 	  sticker_id varchar(200) NOT NULL,
@@ -284,8 +350,11 @@ function __wp_sticker_plugin_install() {
 	  cr_date varchar(200) NOT NULL,
 	  author INT NOT NULL,
 	  cookie_user_id varchar(100) NOT NULL,
+	  target_users varchar(200) NOT NULL,
 	  UNIQUE KEY id (id)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $main_table );
+	update_option( "wpst_db_version", $wpst_db_version );
 }
 ?>

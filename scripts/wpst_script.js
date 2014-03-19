@@ -37,6 +37,7 @@ var isAir = check(/adobeair/);
 var isLinux = check(/linux/);
 var isSecure = /^https/i.test(window.location.protocol);
 var isIE7InIE8 = isIE7 && DOC.documentMode == 7;
+var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
 var jsType = '', browserType = '', browserVersion = '', osName = '';
 var ua = navigator.userAgent.toLowerCase();
@@ -65,7 +66,7 @@ if(isIE){
 	browserVersion = ua.substring(versionStart, versionEnd);
 
 	jsType = isIE6 ? 'IE6' : isIE7 ? 'IE7' : isIE8 ? 'IE8' : 'IE';
-} else if (isGecko){
+} else if (isGecko) {
 	var isFF =  check(/firefox/);
 	browserType = isFF ? 'Firefox' : 'Others';;
 	jsType = isGecko2 ? 'Gecko2' : isGecko3 ? 'Gecko3' : 'Gecko';
@@ -98,15 +99,15 @@ function WPST() {
 	/* Construct */
 	this.phpDATA = wpst_data;
 	/* Define icon button's html */
-	this.add_button_html = "<i class='wpst-button icon-plus-squared' title='Add new note'>";
-	this.cancel_button_html = "<i class='wpst-button icon-cancel-squared' title='Cancel'>";
-	this.edit_button_html = "<i class='wpst-button icon-plus-squared'>";
-	this.ok_button_html = "<i class='wpst-button icon-ok-squared'>";
-	this.list_button_html = "<i class='wpst-button icon-th-list'>";
-	this.block_button_html = "<i class='wpst-button icon-block' title='Hide Notes'>";
-	this.show_button_html = "<i class='wpst-button icon-dot-circled' title='Show Notes'>"
+	this.add_button_html = "<i class='wpst-button wpst-icon-plus-squared' title='Add new note'>";
+	this.cancel_button_html = "<i class='wpst-button wpst-icon-cancel-squared' title='Cancel'>";
+	this.edit_button_html = "<i class='wpst-button wpst-icon-plus-squared'>";
+	this.ok_button_html = "<i class='wpst-button wpst-icon-ok-squared'>";
+	this.list_button_html = "<i class='wpst-button wpst-icon-th-list'>";
+	this.block_button_html = "<i class='wpst-button wpst-icon-block' title='Hide Notes'>";
+	this.show_button_html = "<i class='wpst-button wpst-icon-dot-circled' title='Show Notes'>"
 	
-	this.stickerHTML = "<div class='resize'><header></header><textarea name='sticker_text'></textarea><div class='ajax-loading'><img src='"+wpst_data.plugin_dir+"/scripts/images/ajax-loader.gif'></div></div><i class='icon-cancel'></i><i class='icon-ok'></i>";
+	this.stickerHTML = "<div class='resize'><header></header><div class='textarea' contenteditable='true'></div><div class='ajax-loading'><img src='"+wpst_data.plugin_dir+"/scripts/images/ajax-loader.gif'></div></div><i class='wpst-icon-cancel'></i><i class='wpst-icon-ok'></i><div class='wpst-suggestions'></div>";
 	this.screenWidth = getViewport("width");
 	this.allStickers = new Array();
 	this.isParentRelative = false;
@@ -139,18 +140,22 @@ function WPST() {
 	}
 	
 	this.saveSticker = function( sticker ) {
+		sticker.find( '.textarea' ).html( this.parseTextFixer( sticker.find( '.textarea' ).html() ) ); // Replace plain urls with links and improve html
 		properties = JSON.stringify( this.getProperties( sticker ) );
 		url = document.URL.split('#')[0]; // Get Url without hash parameter
-		note = sticker.find("textarea").val();
+		note = sticker.find(".textarea").html();
 		sticker_id = sticker.attr("id");
-		//console.log( properties );
+		userIDs = new Array();
+		sticker.find(".textarea input").each(function(index, element){
+			userIDs.push( $(element).data('userid') );
+		});
 		
 		sticker.addClass("loading");
 		jQuery.ajax({
 			type: "POST",
 			url: wpst_data.home_url+'/wp-admin/admin-ajax.php',
-			data: { sticker_id: sticker_id, properties: properties, url: url, note: note, action: "wpst_save_sticker" },
-			dataType: "text",
+			data: { sticker_id: sticker_id, properties: properties, url: url, note: note, users: JSON.stringify( userIDs ), action: "wpst_save_sticker" },
+			dataType: "html",
 			success: function (dataBack) {
 				if(dataBack == "OK") {
 					sticker.removeClass("loading").addClass("sticked saved");
@@ -212,7 +217,7 @@ function WPST() {
 				"data-from-center": sticker_properties.from_center,
 				css: { "top" : sticker_properties.top+"px", "left" : from_left+"px", "position" : "absolute" }
 			}).appendTo('body');
-		  	sticker.html( this.stickerHTML ).find("textarea").val( stickers[i].note );
+		  	sticker.html( this.stickerHTML ).find(".textarea").html( stickers[i].note );
 			sticker.find(".resize").css({ width: sticker_properties.width+"px", height: sticker_properties.height+"px" });
 			this.bindEvents( sticker );
 			this.allStickers.push( sticker );
@@ -220,7 +225,6 @@ function WPST() {
 	}
 	
 	this.calculateTopFix = function() {  /* Calculate additional top amount to fix jQuery UI position bug while dragging. Cross browser  */
-		
 		if( isWebKit && isOpera && this.isParentRelative )
 			return jQuery(document).scrollTop() - jQuery("html").position().top;
 		else if( isWebKit && isOpera )
@@ -235,14 +239,20 @@ function WPST() {
 			return jQuery(document).scrollTop();
 	}
 	
+	this.parseTextFixer = function( text ) {
+		text = text.replace( /&nbsp;/g, " " );
+		text =  Autolinker.link( text, {truncate: 55, stripPrefix: false} );
+		return text;
+	}
+	
 	this.bindEvents = function( sticker ) {
 		sticker.click(function(){
 			recentClass( sticker );
 		});
-		sticker.find(".icon-ok").click(function(){
+		sticker.find(".wpst-icon-ok").click(function(){
 			WPST.saveSticker($(this).closest(".wpst-sticker-note"));
 		});
-		sticker.find(".icon-cancel").click(function(){
+		sticker.find(".wpst-icon-cancel").click(function(){
 			WPST.deleteSticker($(this).closest(".wpst-sticker-note"));
 		});
 		sticker.draggable({
@@ -260,10 +270,54 @@ function WPST() {
 		sticker.find(".resize").resizable({
 			start: function() { $(this).closest(".wpst-sticker-note").removeClass("sticked"); }
 		});
-		
-		sticker.find("textarea").keyup(function(){
+		sticker.find(".textarea").keyup(function(){
 			$(this).closest(".wpst-sticker-note").removeClass("sticked");
+			WPST.showSuggestions( sticker );
 		});
+	}
+	
+	this.showSuggestions = function( sticker ) {
+		text = sticker.find( '.textarea' ).html().replace(/&nbsp;/g, ' ');
+		sticker.find(".wpst-suggestions").empty();
+		if( text.indexOf( " @" ) != -1 || text.indexOf( "@" ) == 0 || text.indexOf( ">@" ) != -1 ) {
+			var tag = text.match(/@([a-zA-Z0-9_.\-]+)/)[1];
+			tag = tag.replace("@", "" ); 
+		}
+		if( tag ) {
+			jQuery.ajax({
+				type: "POST",
+				url: wpst_data.home_url+'/wp-admin/admin-ajax.php',
+				data: { letters: tag, action: "wpst_get_users" },
+				dataType: "text",
+				success: function ( dataBack ) {
+					sticker.find(".wpst-suggestions").empty();
+					var suggestions = JSON.parse( dataBack );
+					$.each( suggestions, function( i, user ){
+						sticker.find(".wpst-suggestions").append( '<a class="users-tag" data-userid="' + user.ID + '">' + user.display_name + '</a>' );
+					});
+					sticker.find(".users-tag").click(function(){
+						WPST.insertTag( sticker, $(this), tag );
+					});
+				},
+				async:true
+			});
+		}
+	}
+	
+	this.insertTag = function( sticker, tag, typedTag ) {
+		var textarea = sticker.find(".textarea");
+		textarea.html( textarea.html().replace( "@" + typedTag, "<input type='button' class='inline-tag' data-userid='" + tag.data("userid") + "' value='" + tag.text() + "'> &nbsp;" ) );
+		//this.noteHtmlFix( 'mozilla', textarea ); // Fix note textarea html if needed in some browsers
+		sticker.find(".wpst-suggestions").empty();
+		placeCaretAtEnd( textarea.get(0) );
+	}
+	
+	this.noteHtmlFix = function( browser, textarea ) {
+		if( browser == 'mozilla' ) {
+			textarea.find("button").each(function(index, element){
+				$(element).replaceWith( "<input type='button' class='inline-tag' data-userid='" + $(element).attr('data-userid') + "' value='" + $(element).text() + "'>" );
+			});
+		}
 	}
 	
 	this.calcLeft = function( from_center ) {
@@ -276,44 +330,43 @@ function WPST() {
 }
 var WPST = new WPST();
 
-	jQuery(document).ready(function(e) {
-		
-		$(document).bind('keydown', function(e) {
-		  if(e.ctrlKey && (e.which == 83)) {
-			e.preventDefault();
-			jQuery( ".wpst-sticker-note.recent" ).find( ".icon-ok" ).click();
-			return false;
-		  }
-		});
-		
-		/* Create menu container if user has rights to create notes */
-		if( wpst_data.wpst_current_caps.wpst_create ) { 
-			var wpstMainContainer = WPST.createMenuContainer();
-			wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.show_button_html );
-		}
-		
-		$("i.icon-plus-squared").click(function(e) {
-			var sticker = WPST.createNewSticker();
-			sticker.append( WPST.stickerHTML );
-			WPST.bindEvents( sticker );
-		});
-		
-		$("i.icon-block").click(function(e) {
-			$(this).hide();
-			$("i.icon-dot-circled").css('display','inline-block');
-			$(".wpst-sticker-note").hide();
-		});
-		
-		$("i.icon-dot-circled").click(function(e) {
-			$(this).hide();
-			$("i.icon-block").css('display','inline-block');
-			$(".wpst-sticker-note").show();
-		});
-		
-		/* Create saved stickers from DB */
-		WPST.createSavedStickers( WPST.phpDATA.stickers );
-		
+jQuery(document).ready(function(e) {
+	$(document).bind('keydown', function(e) {
+	  if(e.ctrlKey && (e.which == 83)) {
+		e.preventDefault();
+		jQuery( ".wpst-sticker-note.recent" ).find( ".wpst-icon-ok" ).click();
+		return false;
+	  }
 	});
+	
+	/* Create menu container if user has rights to create notes */
+	if( wpst_data.wpst_current_caps.wpst_create ) { 
+		var wpstMainContainer = WPST.createMenuContainer();
+		wpstMainContainer.append( WPST.add_button_html, WPST.block_button_html, WPST.show_button_html );
+	}
+	
+	$("i.wpst-icon-plus-squared").click(function(e) {
+		var sticker = WPST.createNewSticker();
+		sticker.append( WPST.stickerHTML );
+		WPST.bindEvents( sticker );
+	});
+	
+	$("i.wpst-icon-block").click(function(e) {
+		$(this).hide();
+		$("i.wpst-icon-dot-circled").css('display','inline-block');
+		$(".wpst-sticker-note").hide();
+	});
+	
+	$("i.wpst-icon-dot-circled").click(function(e) {
+		$(this).hide();
+		$("i.wpst-icon-block").css('display','inline-block');
+		$(".wpst-sticker-note").show();
+	});
+	
+	/* Create saved stickers from DB */
+	WPST.createSavedStickers( WPST.phpDATA.stickers );
+	
+});
 
 jQuery(window).resize(function(e) {
     WPST.screenWidth = getViewport("width");
@@ -356,6 +409,24 @@ function getViewport(what)
 	 else if(!what)
 	 	return(viewportwidth+"x"+viewportheight);
 	//-->
+}
+
+function placeCaretAtEnd( el ) {
+    el.focus();
+    if (typeof window.getSelection != "undefined"
+            && typeof document.createRange != "undefined") {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } else if (typeof document.body.createTextRange != "undefined") {
+        var textRange = document.body.createTextRange();
+        textRange.moveToElementText(el);
+        textRange.collapse(false);
+        textRange.select();
+    }
 }
 
 } )( jQuery );

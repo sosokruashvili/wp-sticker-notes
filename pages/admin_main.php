@@ -41,7 +41,7 @@ $everyone = get_option( "wpst_allow_unauthorized" );
     </select>
 </div>
 <div class="clear h10"></div>
-<span class="description"><?php echo __( "You can also edit permissions by user on <a href='/wp-admin/users.php'>user edit page</a>" )?></span>
+<span class="description"><?php echo __( "You can also edit permissions individually for users on <a href='/wp-admin/users.php'>user edit page</a>" )?></span>
 <div class="clear h10"></div>
     <button class="button action"><?php echo __( "Save" )?></button>
 </form>

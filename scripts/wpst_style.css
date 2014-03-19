@@ -19,13 +19,12 @@
   font-weight: normal;
   font-style: normal;
 }
- [class^="icon-"]:before, [class*=" icon-"]:before {
+ [class^="wpst-icon-"]:before, [class*=" wpst-icon-"]:before {
   font-family: "fontello";
   font-style: normal;
   font-weight: normal;
   speak: none;
   font-size:28px;
- 
   display: inline-block;
   text-decoration: inherit;
   width: 1em;
@@ -50,15 +49,15 @@
   /* Uncomment for 3D effect */
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
-.icon-ok:before { content: '\e808'; } /* '' */ 
-.icon-th-list:before { content: '\e805'; } /* '' */
-.icon-ok-squared:before { content: '\e804'; } /* '' */
-.icon-cancel:before { content: '\e807'; } /* '' */
-.icon-plus-squared:before { content: '\e803'; } /* '' */
-.icon-minus-squared:before { content: '\e800'; } /* '' */
-.icon-block:before { content: '\e802'; } /* '' */
-.icon-cancel-squared:before { content: '\e801'; } /* '' */
-.icon-dot-circled:before { content: '\e809'; } /* '' */
+.wpst-icon-ok:before { content: '\e808'; } /* '' */ 
+.wpst-icon-th-list:before { content: '\e805'; } /* '' */
+.wpst-icon-ok-squared:before { content: '\e804'; } /* '' */
+.wpst-icon-cancel:before { content: '\e807'; } /* '' */
+.wpst-icon-plus-squared:before { content: '\e803'; } /* '' */
+.wpst-icon-minus-squared:before { content: '\e800'; } /* '' */
+.wpst-icon-block:before { content: '\e802'; } /* '' */
+.wpst-icon-cancel-squared:before { content: '\e801'; } /* '' */
+.wpst-icon-dot-circled:before { content: '\e809'; } /* '' */
 
 
 /* Main layouts styles ============= */
@@ -104,10 +103,10 @@
 	display:block;
 	margin-top:10px;
 }
-.wpst-note-container .wpst-button.icon-dot-circled {
+.wpst-note-container .wpst-button.wpst-icon-dot-circled {
 	display:none;
 }
-.wpst-note-container .icon-th-list:before {
+.wpst-note-container .wpst-icon-th-list:before {
 	margin-left:10px !important;
 	font-size:24px !important;
 }
@@ -163,12 +162,11 @@
 .wpst-sticker-note.sticked:before {
 	display:block;
 }
-.wpst-sticker-note textarea {
+.wpst-sticker-note .textarea {
 	background:none;
 	border:none;
 	outline:none;
 	box-shadow:none;
-	width:95%;
 	height:calc(100% - 30px);
 	min-height:60px;
 	resize: none;
@@ -182,11 +180,11 @@
 	padding:10px 10px 0 15px;
 	overflow: auto !important;
 }
-.wpst-sticker-note textarea:focus {
+.wpst-sticker-note .textarea:focus {
 	border:none !important;
 	outline:none !important;
 }
-.wpst-sticker-note.sticked .icon-ok {
+.wpst-sticker-note.sticked .wpst-icon-ok {
 	display:none;
 }
 .wpst-sticker-note .ajax-loading {
@@ -199,29 +197,69 @@
 .wpst-sticker-note.loading .ajax-loading {
 	display:block;
 }
-.wpst-sticker-note .icon-cancel {
+.wpst-sticker-note .wpst-icon-cancel {
 	position:absolute;
 	left:1px;
 	top:5px;
 	z-index:9999;
 	cursor:pointer;
 }
-.wpst-sticker-note .icon-cancel:before {
+.wpst-sticker-note .wpst-icon-cancel:before {
 	font-size:18px;
 	color:#666;	
 }
-.wpst-sticker-note .icon-ok {
+.wpst-sticker-note .wpst-icon-ok {
 	position:absolute;
 	left:3px;
 	bottom:5px;
 	z-index:9999;
 	cursor:pointer;
 }
-.wpst-sticker-note .icon-ok:before {
+.wpst-sticker-note .wpst-icon-ok:before {
 	font-size:18px !important;
 	color:#229edc;
 	color:#666;	
 }
 .wpst-note-container .hide, wpst-sticker-note .hide {
 	display:none;
+}
+.wpst-suggestions {
+	border:#CCC solid 1px;
+	background:#FFF;
+	position:absolute;
+	top:100%;
+	width:100%;
+}
+.wpst-suggestions:empty {
+	display:none;
+}
+.wpst-suggestions .users-tag {
+	float:left;
+	display:block;
+	width:100%;
+	padding:5px 5px;
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	cursor:pointer;
+	color:#333;
+	text-decoration:none;
+}
+.wpst-suggestions .users-tag:hover {
+	background:#229edc;
+	color:#FFF;
+}
+.wpst-sticker-note .inline-tag {
+	background: #b3cbd7;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	padding: 0 2px;
+	height: 18px;
+	display: inline-block;
+	border: #8D939E solid 1px;
+	color: #000;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight:normal;
+	text-transform:none;
+	font-size:14px;
 }
