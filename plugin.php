@@ -90,7 +90,7 @@ function wpst_load_front_files() {
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
 	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.2", true );
+	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.3", true );
 	wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
 	
 	// Send data to client
@@ -272,14 +272,15 @@ function wpst_send_notification( $notification_users ) {
 		$tempObj = get_userdata( $userid );
 		$notification_emails[] = $tempObj->user_email;
 	}
+	$stc_id = $_POST["sticker_id"];
 	$note_url = $_POST['url'];
 	$website_url = get_site_url( $blog_id, $path, "http" ); 
 	$current_user_info = get_userdata( get_current_user_id() );
 	$current_user_display_name = $current_user_info->data->display_name;
-	$headers = 'From: ' . $_SERVER['HTTP_HOST'] . ' <' . get_option( "admin_email") . '>';
+	$headers = 'From: ' . $_SERVER['HTTP_HOST'] . ' <' . get_option( "admin_email") . ">\r\n";
 	
 	add_filter( 'wp_mail_content_type', 'set_html_content_type' );
-	wp_mail( $notification_emails, "New sticky note", "User: {$current_user_display_name} has tagged you on a note with text: <br><blockquote style='color:#7f7f7f'>" .  strip_tags( stripslashes( $_POST['note'] ) ) . "</blockquote><a href='{$note_url}'> See the note</a>", $headers );
+	wp_mail( $notification_emails, "New sticky note ", "User: {$current_user_display_name} has tagged you on a note with text: <br><blockquote style='color:#7f7f7f'>" .  strip_tags( stripslashes( $_POST['note'] ) ) . "</blockquote><a href='{$note_url}#{$stc_id}'> See the note</a><br/><br/><span style='color:#7f7f7f'>Note: You may not see the note if you wont authorize</span>", $headers );
 	// Reset content-type to avoid conflicts
 	remove_filter( 'wp_mail_content_type', 'set_html_content_type' );	
 }
