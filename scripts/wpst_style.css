@@ -179,6 +179,8 @@
 	line-height:1.2;
 	padding:10px 10px 0 15px;
 	overflow: auto !important;
+	white-space:pre-wrap;
+	color:#333;
 }
 .wpst-sticker-note .textarea:focus {
 	border:none !important;
@@ -262,4 +264,18 @@
 	font-weight:normal;
 	text-transform:none;
 	font-size:14px;
+}
+.wpst-sticker-note a {
+	text-decoration:underline;
+	color:#333;
+}
+.wpst-sticker-note a:hover {
+	text-decoration:none;
+	color:#333;
+}
+
+@media (max-width: 1280px) {
+	.wpst-sticker-note {
+		display:none;
+	}
 }

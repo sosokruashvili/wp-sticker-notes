@@ -3,7 +3,7 @@
 Plugin Name: WP Sticky Notes
 Plugin URI: http://sticker-notes.com/
 Description: Add sticky note for any page to any position 
-Version: 2.0.1
+Version: 2.1.5
 Author: Kruashvili
 Author URI: http://sticker-notes.com/
 License: GPL 2
@@ -74,7 +74,7 @@ function __wp_sticker_menu() {
 function __wp_sticker_get_page() {
 	global $WPSticker;
 	global $WPST_PLUGIN;
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/admin-style.css", false, "1.2.8" );
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/admin-style.css", false, "1.2.9" );
 	require_once( __DIR__ . "/pages/admin_main.php" );
 }
 
@@ -86,11 +86,11 @@ function wpst_is_unauth_and_can( $cap ) {
 
 function wpst_load_front_files() {
 	global $WPST_PLUGIN;
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.2" );	
+	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.5" );	
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
 	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.3", true );
+	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.5", true );
 	wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
 	
 	// Send data to client

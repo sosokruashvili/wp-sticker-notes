@@ -35,3 +35,7 @@ form[name=group-permissions] select.wpst-caps-list {
 	width:300px;
 	height:200px !important;
 }
+.paypal-donate {
+	float:right;
+	margin-right:150px;
+}

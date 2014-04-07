@@ -240,7 +240,6 @@ function WPST() {
 	}
 	
 	this.parseTextFixer = function( text ) {
-		text = text.replace( /&nbsp;/g, " " );
 		text =  Autolinker.link( text, {truncate: 55, stripPrefix: false} );
 		return text;
 	}
@@ -277,11 +276,10 @@ function WPST() {
 	}
 	
 	this.showSuggestions = function( sticker ) {
-		text = sticker.find( '.textarea' ).html().replace(/&nbsp;/g, ' ');
+		text = sticker.find( '.textarea' ).html();
 		sticker.find(".wpst-suggestions").empty();
-		if( text.indexOf( " @" ) != -1 || text.indexOf( "@" ) == 0 || text.indexOf( ">@" ) != -1 ) {
+		if( text.indexOf( " @" ) != -1 || text.indexOf( "@" ) == 0 || text.indexOf( ">@" ) != -1 || text.indexOf( ";@" ) != -1 ) {
 			var tag = text.match(/@([a-zA-Z0-9_.\-]+)/)[1];
-			tag = tag.replace("@", "" ); 
 		}
 		if( tag ) {
 			jQuery.ajax({
@@ -306,18 +304,9 @@ function WPST() {
 	
 	this.insertTag = function( sticker, tag, typedTag ) {
 		var textarea = sticker.find(".textarea");
-		textarea.html( textarea.html().replace( "@" + typedTag, "<input type='button' class='inline-tag' data-userid='" + tag.data("userid") + "' value='" + tag.text() + "'> &nbsp;" ) );
-		//this.noteHtmlFix( 'mozilla', textarea ); // Fix note textarea html if needed in some browsers
+		textarea.html( textarea.html().replace( "@" + typedTag, "<input type='button' class='inline-tag' data-userid='" + tag.data("userid") + "' value='" + tag.text() + "'> " ) );
 		sticker.find(".wpst-suggestions").empty();
 		placeCaretAtEnd( textarea.get(0) );
-	}
-	
-	this.noteHtmlFix = function( browser, textarea ) {
-		if( browser == 'mozilla' ) {
-			textarea.find("button").each(function(index, element){
-				$(element).replaceWith( "<input type='button' class='inline-tag' data-userid='" + $(element).attr('data-userid') + "' value='" + $(element).text() + "'>" );
-			});
-		}
 	}
 	
 	this.calcLeft = function( from_center ) {

@@ -4,7 +4,7 @@ Donate link: http://sticker-notes.com/
 Tags: sticker, sticky, notes, plugin, wordpress
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 2.0.1
+Stable tag: 2.1.5
 License: GNU3
 License URI: https://www.gnu.org/copyleft/gpl.html
 
@@ -60,11 +60,19 @@ This happens when website is with responsive design and  you are viewing notes i
 
 == Screenshots ==
 1. Note on front page
-2. Note on front page
+2. Tagging users to note
 3. Sticky Note
 4. Admin settings page
 
 == Changelog ==
+
+= 2.1.5 = 
+* Added CSS media query to hide notes on lower resolutions
+* Added donate button in admin
+* Changed some minor styles
+
+= 2.0.4 = 
+* Fixed bugs related to mozilla firefox
 
 = 2.0.1 = 
 * Fixed DB errors
@@ -101,6 +109,14 @@ This happens when website is with responsive design and  you are viewing notes i
 * Realease
 
 == Upgrade Notice ==
+
+= 2.1.5 = 
+Added CSS media query to hide notes on lower resolutions
+Added donate button in admin
+Changed some minor styles
+
+= 2.0.4 = 
+Fixed bugs related to mozilla firefox
 
 = 2.0.1 = 
 Fixed DB errors
