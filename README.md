@@ -9,6 +9,12 @@ where the problem is or fix needed.
 
 This tool is very usefull on website testing stage.
 
+**Version 2.1.5**
+* Added CSS media query to hide notes on lower resolutions
+* Added donate button in admin
+* Changed some minor styles
+* Fixed bugs related to mozilla firefox
+* Fixed DB errors
 
 **Version 2.0**
 * Added URL Parser in note content, replace plain urls to link
