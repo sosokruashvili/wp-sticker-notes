@@ -60,9 +60,11 @@ if( @$_POST['permissions_submit'] == 1 ) {
 		foreach( $_POST[ $role_to_change ] as $cap ) {
 			$role->add_cap( $cap );
 		}
+		update_option( "wpst_allowable_post_type", $_POST['wpst_allowable_post_type'] );
 	}
 	else {
 		update_option( "wpst_allow_unauthorized", $_POST['everyone'] );
+		update_option( "wpst_allowable_post_type", $_POST['wpst_allowable_post_type'] );
 	}
 }
 
@@ -85,16 +87,20 @@ function wpst_is_unauth_and_can( $cap ) {
 }
 
 function wpst_load_front_files() {
-	global $WPST_PLUGIN;
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.5" );	
-	wp_enqueue_script( 'jquery' );
-	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.5", true );
-	wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
-	
-	// Send data to client
-	wpst_send_client_data();
+	global $WPST_PLUGIN, $post;
+	$post_types = get_option('wpst_allowable_post_type');
+
+	if (in_array($post->post_type, $post_types)){
+		wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.5" );	
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
+		wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
+		wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.5", true );
+		wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
+		
+		// Send data to client
+		wpst_send_client_data();
+	}
 }
 
 function wpst_send_client_data() {
@@ -112,7 +118,7 @@ function wpst_send_client_data() {
 						'plugin_dir' => plugins_url() . "/" . $WPST_PLUGIN['folder'],
 						'stickers' => get_stickers_json(),
 						'wpst_current_caps' => $wpst_current_caps
-					  ));
+						));
 }
 
 function wpst_user_can( $subject ) {
@@ -206,7 +212,7 @@ function wpst_save_sticker() {
 																		"properties" => $sticker_props, 
 																		"target_users" => $target_users,
 																		"note" => $sticker_note ), 
-																	  $where );
+																		$where );
 			if( !$res1 )
 				exit( __("You cannot edit this sticky note or is already deleted") );
 			else
@@ -313,29 +319,29 @@ function wpst_save_extra_user_profile_fields( $user_id ) {
 }
 
 function wpst_extra_user_profile_fields( $user ) {  ?> 
-    <h3><?php echo __("Sticky Notes Permissions"); ?></h3>
-    <table class="form-table">
-        <tr>
-            <th><label for="wpst_caps"><?php echo __("Sticky Notes caps") ?></label></th>
-            <td>
-            <select name="wpst_caps[]" id="wpst-user-profile-caps-select" multiple style="width:200px; height:100px;">
-            	<option <?php echo ( user_can( $user, "wpst_read" ) ) ? "selected" : ""; ?> value="wpst_read"><?php echo __("Read")?></option>
-                <option <?php echo ( user_can( $user, "wpst_create" ) ) ? "selected" : ""; ?> value="wpst_create"><?php echo __("Create")?></option>
-                <option <?php echo ( user_can( $user, "wpst_edit" ) ) ? "selected" : ""; ?> value="wpst_edit"><?php echo __("Edit")?></option>
-            </select>
-            <div style="clear:both;"></div>
-            <span class="description"><?php echo __("Please choose sticky notes capabilities for this user") ?></span>
-            </td>
-        </tr>
-    </table>
+		<h3><?php echo __("Sticky Notes Permissions"); ?></h3>
+		<table class="form-table">
+				<tr>
+						<th><label for="wpst_caps"><?php echo __("Sticky Notes caps") ?></label></th>
+						<td>
+						<select name="wpst_caps[]" id="wpst-user-profile-caps-select" multiple style="width:200px; height:100px;">
+							<option <?php echo ( user_can( $user, "wpst_read" ) ) ? "selected" : ""; ?> value="wpst_read"><?php echo __("Read")?></option>
+								<option <?php echo ( user_can( $user, "wpst_create" ) ) ? "selected" : ""; ?> value="wpst_create"><?php echo __("Create")?></option>
+								<option <?php echo ( user_can( $user, "wpst_edit" ) ) ? "selected" : ""; ?> value="wpst_edit"><?php echo __("Edit")?></option>
+						</select>
+						<div style="clear:both;"></div>
+						<span class="description"><?php echo __("Please choose sticky notes capabilities for this user") ?></span>
+						</td>
+				</tr>
+		</table>
 <?php 
 } 
 
 function wpst_update_db_check() {
-    global $wpst_db_version;
-    if ( get_site_option( 'wpst_db_version' ) != $wpst_db_version ) {
-        __wp_sticker_plugin_install();
-    }
+		global $wpst_db_version;
+		if ( get_site_option( 'wpst_db_version' ) != $wpst_db_version ) {
+				__wp_sticker_plugin_install();
+		}
 }
 
 function __wp_sticker_plugin_install() {
@@ -343,16 +349,16 @@ function __wp_sticker_plugin_install() {
 	global $wpst_db_version;
 	$main_table = "CREATE TABLE " . $wpdb->prefix . "sticker_notes (
 	id INT NOT NULL AUTO_INCREMENT,
-	  sticker_id varchar(200) NOT NULL,
-	  url varchar(200) NOT NULL,
-	  properties varchar(200) NOT NULL,
-	  note text NOT NULL,
-	  color varchar(100) NOT NULL,
-	  cr_date varchar(200) NOT NULL,
-	  author INT NOT NULL,
-	  cookie_user_id varchar(100) NOT NULL,
-	  target_users varchar(200) NOT NULL,
-	  UNIQUE KEY id (id)
+		sticker_id varchar(200) NOT NULL,
+		url varchar(200) NOT NULL,
+		properties varchar(200) NOT NULL,
+		note text NOT NULL,
+		color varchar(100) NOT NULL,
+		cr_date varchar(200) NOT NULL,
+		author INT NOT NULL,
+		cookie_user_id varchar(100) NOT NULL,
+		target_users varchar(200) NOT NULL,
+		UNIQUE KEY id (id)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $main_table );
