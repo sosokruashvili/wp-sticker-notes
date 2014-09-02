@@ -14,7 +14,7 @@ Create and stick notes to any page on any position
 = With this plugin you are able to: = 
 
 *   Create and stick note to any page on any position
-*   Tag users on a note with ì@î and target note to specified users
+*   Tag users on a note with ‚Äú@‚Äù and target note to specified users
 *   Communicate between website administrator and developer by simple notes ( tasks )
 *   See exact location of problem or some issue
 *   Control issues and communicate by inline note editing
@@ -26,7 +26,7 @@ For example: if there is bug or is required to change something administrator ca
 = New Features =
 
 *   Added URL Parser in note content, replace plain urls to link
-*   Possibility to tag users in note with ì@î and target note to specified users
+*   Possibility to tag users in note with ‚Äú@‚Äù and target note to specified users
 *   Email notification for users who was tagged on a note
 *   Added permission management structure, capabilities: read, create, edit
 *   Added capability management on user edit page
@@ -66,6 +66,9 @@ This happens when website is with responsive design and  you are viewing notes i
 
 == Changelog ==
 
+= 2.2 = 
+* Added a feature which allows to show the notes only on the post types selected by the admin
+
 = 2.1.5 = 
 * Added CSS media query to hide notes on lower resolutions
 * Added donate button in admin
@@ -79,7 +82,7 @@ This happens when website is with responsive design and  you are viewing notes i
 
 = 2.0 = 
 * Added URL Parser in note content, replace plain urls to link
-* Possibility to tag users in note with ì@î and target note to specified users
+* Possibility to tag users in note with ‚Äú@‚Äù and target note to specified users
 * Email notification for users who was tagged on a note
 * Fixed bug: css verriding fontello elements
 
@@ -123,7 +126,7 @@ Fixed DB errors
 
 = 2.0 = 
 Added URL Parser in note content, replace plain urls to link
-Possibility to tag users in note with ì@î and target note to specified users
+Possibility to tag users in note with ‚Äú@‚Äù and target note to specified users
 Email notification for users who was tagged on a note
 
 = 1.5.2 = 
