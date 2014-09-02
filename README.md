@@ -9,6 +9,9 @@ where the problem is or fix needed.
 
 This tool is very usefull on website testing stage.
 
+**Version 2.2**
+* Added a feature which allows to show the notes only on the post types selected by the admin
+
 **Version 2.1.5**
 * Added CSS media query to hide notes on lower resolutions
 * Added donate button in admin
