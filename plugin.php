@@ -3,7 +3,7 @@
 Plugin Name: WP Sticky Notes
 Plugin URI: http://sticker-notes.com/
 Description: Add sticky note for any page to any position 
-Version: 2.1.5
+Version: 2.2
 Author: Kruashvili
 Author URI: http://sticker-notes.com/
 License: GPL 2
