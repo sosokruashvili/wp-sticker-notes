@@ -50,21 +50,35 @@ $role->add_cap( "wpst_edit" );
 $role->add_cap( "wpst_create" );
 
 // Update wordpress capabilities
-if( @$_POST['permissions_submit'] == 1 ) {
+if(isset($_POST['permissions_submit']) ){
+	if (!isset($_POST['wpst_allowable_post_type'])){
+		header('Location: '.admin_url().'admin.php?page=wpst_main&message=2');
+		exit;
+	}
 	$role_to_change = $_POST["wpst_group"];
-	if( $role_to_change != "everyone" ) {
-		$role = get_role( $role_to_change ); 
-		$role->remove_cap( "wpst_read" );
-		$role->remove_cap( "wpst_edit" );
-		$role->remove_cap( "wpst_create" );
-		foreach( $_POST[ $role_to_change ] as $cap ) {
-			$role->add_cap( $cap );
+	if( !in_array('everyone', $role_to_change) ) {
+		foreach( $role_to_change as $key => $caps ) {
+			$role = get_role( $key );
+			if (!empty($caps)){
+				foreach ($caps as $cap) {
+					$role->remove_cap( $cap );
+					$role->add_cap( $cap );
+				}
+			} else {
+				$role->remove_cap( "wpst_read" );
+				$role->remove_cap( "wpst_edit" );
+				$role->remove_cap( "wpst_create" );
+			}
 		}
 		update_option( "wpst_allowable_post_type", $_POST['wpst_allowable_post_type'] );
+		header('Location: '.admin_url().'admin.php?page=wpst_main&message=1');
+		exit;
 	}
 	else {
 		update_option( "wpst_allow_unauthorized", $_POST['everyone'] );
 		update_option( "wpst_allowable_post_type", $_POST['wpst_allowable_post_type'] );
+		header('Location: '.admin_url().'admin.php?page=wpst_main&message=1');
+		exit;
 	}
 }
 
