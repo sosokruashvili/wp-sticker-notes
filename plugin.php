@@ -60,9 +60,11 @@ if( @$_POST['permissions_submit'] == 1 ) {
 		foreach( $_POST[ $role_to_change ] as $cap ) {
 			$role->add_cap( $cap );
 		}
+		update_option( "wpst_allowable_post_type", $_POST['wpst_allowable_post_type'] );
 	}
 	else {
 		update_option( "wpst_allow_unauthorized", $_POST['everyone'] );
+		update_option( "wpst_allowable_post_type", $_POST['wpst_allowable_post_type'] );
 	}
 }
 
@@ -85,16 +87,20 @@ function wpst_is_unauth_and_can( $cap ) {
 }
 
 function wpst_load_front_files() {
-	global $WPST_PLUGIN;
-	wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.5" );	
-	wp_enqueue_script( 'jquery' );
-	wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
-	wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.5", true );
-	wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
-	
-	// Send data to client
-	wpst_send_client_data();
+	global $WPST_PLUGIN, $post;
+	$post_types = get_option('wpst_allowable_post_type');
+
+	if (in_array($post->post_type, $post_types)){
+		wp_enqueue_style( 'wpst-main-style', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_style.css", false, "1.6.5" );	
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-draggable', "", array("jquery"), "", true );
+		wp_enqueue_script( 'jquery-ui-resizable', "", array("jquery"), "", true );
+		wp_enqueue_script( 'wpst-main-script', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/wpst_script.js", array("jquery"), "1.6.5", true );
+		wp_enqueue_script( 'wpst-autolinker-tool', plugins_url() . "/" . $WPST_PLUGIN['folder'] . "/scripts/parsers/Autolinker.min.js", array(), "1.0", true );
+		
+		// Send data to client
+		wpst_send_client_data();
+	}
 }
 
 function wpst_send_client_data() {

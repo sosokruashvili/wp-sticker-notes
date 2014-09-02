@@ -273,9 +273,3 @@
 	text-decoration:none;
 	color:#333;
 }
-
-@media (max-width: 1280px) {
-	.wpst-sticker-note {
-		display:none;
-	}
-}
